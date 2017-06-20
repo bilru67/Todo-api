@@ -17,20 +17,46 @@ app.get('/', function(req, res){
 });
 
 app.get('/todos', function(req, res){
-	var queryParams = req.query;
+	
 	var filteredTodos = todos;
+	var queryParams = req.query;
 	
 	
 	if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'true'){
 		filteredTodos = _.where(filteredTodos, {completed : true});
-		
+
 	}else if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'false'){
 		filteredTodos = _.where(filteredTodos, {completed :false});
 		
-
 	}
+
+	if (queryParams.hasOwnProperty('description') && queryParams.description.length > 0) {
+		filteredTodos = _.filter(filteredTodos, function (todo) {
+			return todo.description.toLowerCase().indexOf(queryParams.description.toLowerCase()) > -1;
+		});
+	}
+  
+
+
+
+/*	filteredTodos.forEach(function(todo){queryParmas.query
+		if(todo.description.indexOf(work) > 0){
+			todos.push(todo);
+		}*/
+
+
+	
 	res.json(filteredTodos);
 
+	
+	//need to determine if querry contains filer string
+	//req.query will equaly the query string
+	//set the query string to a string 
+	//need to us sting.indexof(string) and return on element of the array greater than zero
+	//foreach through filerted todos
+	//call string.indexof on each of the filtered elements
+	//add them to a newfiltered todolist
+ 
 });
 
 app.get('/todos/:id', function(req, res){
