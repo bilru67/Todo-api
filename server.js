@@ -5,8 +5,8 @@ var db = require('./db.js');
 
 var app = express();
 var PORT = process.env.PORT || 3000;
-var todos = [];
-var todoNextID = 1;
+//var todos = [];
+//var todoNextID = 1;
 
 app.use(bodyParser.json());
 
@@ -19,11 +19,33 @@ app.get('/', function(req, res) {
 
 app.get('/todos', function(req, res) {
 
-	var filteredTodos = todos;
-	var queryParams = req.query;
+//	var filteredTodos = todos;
+	var query = req.query;
+	var where = {};
+
+	if(query.hasOwnProperty('completed') && query.completed === 'true'){
+
+		where.completed = true;
+	}else if (query.hasOwnProperty('completed') && query.completed === 'false'){
+		where.completed = false;
+	}
+
+	if(query.hasOwnProperty('q') && query.q.length > 0){
+		where.description = {
+			$like : '%' + query.q + '%'
+		};
 
 
-	if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true') {
+	}
+
+
+	db.todo.findAll({where: where}).then(function (todos){
+			res.json(todos);
+		    },function(e){
+		res.status(500).send();
+	});
+
+/*	if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true') {
 		filteredTodos = _.where(filteredTodos, {
 			completed: true
 		});
@@ -34,7 +56,6 @@ app.get('/todos', function(req, res) {
 		});
 
 	}
-
 	if (queryParams.hasOwnProperty('description') && queryParams.description.length > 0) {
 		filteredTodos = _.filter(filteredTodos, function(todo) {
 			return todo.description.toLowerCase().indexOf(queryParams.description.toLowerCase()) > -1;
@@ -43,15 +64,15 @@ app.get('/todos', function(req, res) {
 
 
 
-	/*	filteredTodos.forEach(function(todo){queryParmas.query
+		filteredTodos.forEach(function(todo){queryParmas.query
 			if(todo.description.indexOf(work) > 0){
 				todos.push(todo);
-			}*/
+			}
 
 
 
 	res.json(filteredTodos);
-
+*/
 
 	//need to determine if querry contains filer string
 	//req.query will equaly the query string
