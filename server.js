@@ -45,42 +45,7 @@ app.get('/todos', function(req, res) {
 		res.status(500).send();
 	});
 
-/*	if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true') {
-		filteredTodos = _.where(filteredTodos, {
-			completed: true
-		});
 
-	} else if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'false') {
-		filteredTodos = _.where(filteredTodos, {
-			completed: false
-		});
-
-	}
-	if (queryParams.hasOwnProperty('description') && queryParams.description.length > 0) {
-		filteredTodos = _.filter(filteredTodos, function(todo) {
-			return todo.description.toLowerCase().indexOf(queryParams.description.toLowerCase()) > -1;
-		});
-	}
-
-
-
-		filteredTodos.forEach(function(todo){queryParmas.query
-			if(todo.description.indexOf(work) > 0){
-				todos.push(todo);
-			}
-
-
-
-	res.json(filteredTodos);
-*/
-
-	//need to determine if querry contains filer string
-	//req.query will equaly the query string
-	//set the query string to a string 
-	//need to us sting.indexof(string) and return on element of the array greater than zero
-	//foreach through filerted todos
-	//call string.indexof on each of the filtered elements
-	//add them to a newfiltered todolist
 
 });
 
@@ -99,30 +64,6 @@ app.get('/todos/:id', function(req, res) {
 	});
 
 
-
-
-
-
-/*
-	var result = _.findWhere(todos, {
-		id: todoId
-	});
-	var result;
-		
-		//interate over the todos. find match
-		todos.forEach(function(todo){
-			if(todoId === todo.id){
-				result = todo;		
-			}
-		});
-	
-	if (result) {
-		res.json(result);
-	} else {
-		res.status(404).send();
-	}
-
-*/
 
 
 });
@@ -148,19 +89,22 @@ app.post('/todos', function(req, res) {
 app.delete('/todos/:id', function(req, res) {
 
 	var todoId = parseInt(req.params.id, 10);
-	var result = _.findWhere(todos, {
-		id: todoId
+
+	db.todo.destroy({
+		where: {
+			id: todoId
+		}
+	}).then(function(rowsDeleted){
+		if(rowsDeleted === 0){
+			res.status(404).json({
+				error: "No todo with id"
+			});
+		}else{
+			res.status(204).json();
+		}
+	}, function(){
+		res.status(500).send();
 	});
-
-	if (!result) {
-		res.status(404).json({
-			"error": "no todo found to delete"
-		});
-	} else {
-
-		todos = _.without(todos, result);
-		res.json(result);
-	}
 
 });
 
